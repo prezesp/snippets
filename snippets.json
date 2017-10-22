@@ -1,0 +1,87 @@
+[{
+	"title": "Utworzenie schematu.",
+	"fragments": [{
+		"text": "Utworzenie schematu.",
+		"code": "CREATE SCHEMA company;"
+	}]
+},
+{
+	"title": "Utworzenie pierwszej <strong>relacji</strong>.",
+	"fragments": [{
+		"text": "Utworzenie pierwszej <strong>relacji</strong>.",
+	"code": "CREATE TABLE company.Employees (\n\tid SERIAL PRIMARY KEY,\n\tfirstname VARCHAR,\n\tlastname VARCHAR,\n\tbirthday DATE,\n\tposition VARCHAR\n);"
+	}]
+},
+{
+	"title": "Wstawianie danych - wstęp",
+	"fragments": [{
+		"text": "Do wstawiania danych do tabeli służy komenda INSERT (ang. <i>wstaw</i>). Jej struktura wygląda następująco:",
+		"code": "INSERT INTO <nazwa_tabeli> (atrybut1, atrybut2, ..., atrybut n) VALUES (wartość1, wartość2, ..., wartość n);"
+	}]
+},
+{
+	"title": "Dodanie pierwszego pracownika :)",
+	"fragments": [{
+		"text": "Znając już składnię polecenia INSERT, można dodać nowych pracowników i następnie wyświetlić wszystkie rekordy z tabeli.",
+		"code": "INSERT INTO employees(firstname, lastname, birthday, position) VALUES (\"Monika\", \"Łoś\", \"1978-10-01\", \"Starszy specjalista\");\n\nSELECT * FROM employees;"
+	}]
+},
+{
+	"title": "Aktualizacja rekordów w tabeli.",
+	"fragments": [{
+		"code": "-- UPDATE <nazwa_tabeli> SET (attr1 = wart1, ...) WHERE conditions\nUPDATE employees SET birthday=\"1990-12-26\" WHERE lastname =\"Kowalska\""
+	}]
+},
+{
+	"title": "Sortowanie i wybór prezentowanych kolumn.",
+	"fragments": [{
+		"code": "select * from employees order by id;\nselect firstname, lastname, birthday from employees where firstname=\"Monika\" order by birthday desc;"
+	}]
+},
+{
+	"title": "Operacje na datach, formatowanie",
+	"fragments": [{
+		"code": "select to_char(birthday,\"DD-MM\"), ID, firstname, lastname from employees where to_char(BIRTHDAY,\"MM\")=\"10\";"
+	}]
+},
+{
+	"title": "Usuwanie rekordów",
+	"fragments": [{
+		"code": "DELETE FROM employees WHERE id=1"
+	}]
+},
+{
+	"title": "Aktualizacja rekordów w tabeli.",
+	"fragments": [{
+		"code": "-- UPDATE <nazwa_tabeli> SET (attr1 = wart1, ...) WHERE conditions \nUPDATE employees SET birthday=\"1990-12-26\" WHERE lastname =\"Kowalska\""
+	}]
+},
+{
+	"title": "Restrukturyzacja naszej bazy danych",
+	"fragments": [{
+		"text": "Po audycie okazało się, że nasza baza mogłaby by być lepsza: mamy problem z niespójnymi nazwami stanowisk.",
+		"code": "-- Utworzenie nowej tabelki\nCREATE TABLE company.positions (\n\tid SERIAL PRIMARY KEY,\n\tname VARCHAR,\n\tmin_salary DECIMAL);\n\n--Wybranie wszystkich pozycji (niepowtarzających się)\nSELECT DISTINCT position FROM employees;\n\n--Obliczenie minimalnej płacy\nSELECT DISTINCT position, 120*char_length(position) AS \"Min salary\" FROM employees;"
+	}, {
+		"text": "Wprowadzenie stanowisk do nowej tabeli",
+		"code": "INSERT INTO company.positions(name, min_salary)  SELECT DISTINCT position, 120*char_length(position) AS \"Min salary\" FROM employees;"
+	}]
+},
+{
+	"title": "Operacja zmiany definicji tabeli (ALTER TABLE)",
+	"fragments": [{
+		"code": "ALTER TABLE employees ADD COLUMN position_id INTEGER;\n\n--Usuwanie kolumny\n--ALTER TABLE employees DROP COLUMN position_id"
+	}]
+},
+{
+	"title": "Ograniczenia integralnościowe",
+	"fragments": [{
+		"code": "ALTER TABLE employees ADD CONSTRAINT positions_fk FOREIGN KEY (position_id) REFERENCES company.positions(id)"
+	}]
+},
+{
+	"title": "Operacja JOIN - łączenie tabel",
+	"fragments": [{
+		"text": "Aby nasza modernizacja tabeli była gotowa musimy zaktualizować rekordy pracowników i połączyć ich z tabelą stanowisk. Tym razem zrobimy to ręcznie wykonując komendy UPDATE. Gdy mamy to już gotowe - pora na połączenie tabel, czyli efekt do którego zmierzaliśmy.",
+		"code": "SELECT e.*, p.name, p.min_salary FROM employees e JOIN company.positions p ON e.position_id=p.id\n\n--Sprzątanie: mamy nadmiarową kolumnę:\nALTER TABLE employees DROP COLUMN position"
+	}]
+}]
