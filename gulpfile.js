@@ -26,6 +26,11 @@ gulp.task('copy', function() {
 });
 
 gulp.task('sass', function() {
+  
+  gulp.src('scss/style.scss')
+    .pipe(sass())
+    .pipe(gulp.dest('css'));
+
   return gulp.src('scss/bootstrap.scss')
     .pipe(sass())
     .pipe(gulp.dest('vendor/bootstrap/css'));
