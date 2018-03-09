@@ -37,8 +37,8 @@ gulp.task('sass', function() {
 });
 
 gulp.task('browserify', function() {
-	return browserify('./highlight-config.js').bundle()
-		.pipe(source('./highlight-config.js'))
+	return browserify('src/highlight-config.js').bundle()
+		.pipe(source('src/highlight-config.js'))
 		.pipe(rename('highlight-pack.js'))
 		.pipe(gulp.dest('vendor/highlight'));
 });

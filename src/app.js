@@ -1,10 +1,10 @@
 // Konfiguracja
 var config = {
 	title: "Nauka SQL",
-	url: "snippets.json",
+	subtitle: "Krótki kurs o tym i o tamtym",
+	url: "data/snippets.json",
 	lang: "sql",
 	show_immediately: false
-
 }
 
 // Zapisywanie kliknięć w storage
@@ -49,6 +49,7 @@ $( document ).ready(function() {
 	});
 	var $container = $('.container:first');
 	$container.find('h2:first').html(config.title);
+	$container.find('p:first').html(config.subtitle);
 	
 	// Pobanie snippetów z okreslonego zasobu (url)
 	$.get({
@@ -57,8 +58,8 @@ $( document ).ready(function() {
 			var completedSnippets = loadSnippets();
 			snippets.forEach(function(s, i) {
 				var $pointDiv = $('<div/>', {
-					'class': 'row point',
-					'html': '<div class="col"><h4>' + (i+1) + '. ' + s.title + '</h4></div>'
+					'class': 'row point',	
+					'html': '<div class="col-lg-offset-1 col-lg-10" style="float:unset !important"><h4>' + (i+1) + '. ' + s.title + '</h4></div>'
 				}).appendTo($container);
 				s.fragments.forEach(function(fragment, j){
 					$('<div/>', {
