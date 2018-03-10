@@ -10,3 +10,22 @@
 .btn-secondary {
 	background-color: #ccc;
 }
+
+button.btn-refresh {
+	&:hover {
+		color: #000;
+		text-decoration: underline;
+	}
+}
+
+.score {
+	position: fixed;
+	top: 30%;
+	left: 0;
+	border: 1px #ccc solid;
+	width: 150px;
+
+	& .panel {
+		margin-bottom: 0;
+	}
+}
