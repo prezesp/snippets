@@ -1,6 +1,8 @@
-var config = {
-	url: "data/snippets.json",
-	show_immediately: false
+import {cfg} from './config.js';
+
+
+var Course = function() {
+	this.config = cfg();
 }
 
 /** 
@@ -8,7 +10,7 @@ var config = {
   * @param int v_id - unique identifier of course step.
   * @param bool v_state - indicates step is accomplished or not.
 */
-function saveSnippets(v_id, v_state) {
+Course.prototype.saveSnippets = function(v_id, v_state) {
 	var sn = top.localStorage.getItem('snippets-notebook') || '[]';
 	sn = JSON.parse(sn).filter(function(element) {
 		return element.id != v_id;
@@ -24,7 +26,10 @@ function saveSnippets(v_id, v_state) {
 	$score.find('.panel-body span:nth-child(1)').html(sn.filter(s => s.state).length);
 };
 
-function loadSnippets() {
+/**
+  * @desc Load course progress from local storage.
+*/
+Course.prototype.loadSnippets = function() {
 	var sn = top.localStorage.getItem('snippets-notebook') || '[]';
 	sn = JSON.parse(sn).filter(function(element) {
 		return element.state == true;
@@ -34,10 +39,9 @@ function loadSnippets() {
 	var $score = $('.score');
 	$score.find('.panel-body span:nth-child(1)').html(sn.length);
 	return sn;
-}
+};
 
-function toggleClass(b, id) {
-	console.log($(b));
+Course.prototype.toggleClass = function(b, id) {
 	var mark = $(b).hasClass('btn-secondary');
 
 	if (mark) {
@@ -46,10 +50,14 @@ function toggleClass(b, id) {
 		$(b).addClass('btn-secondary').removeClass('btn-success');
 	}
 
-	saveSnippets(id, mark); 
+	this.saveSnippets(id, mark); 
 };
 
+
+
 $( document ).ready(function() {
+	var course = new Course();
+
 	$('.btn-refresh').click(function() {
 		top.localStorage.removeItem('snippets-notebook');
 		location.reload();
@@ -59,7 +67,7 @@ $( document ).ready(function() {
 	
 	// Get snippets from predefined url
 	$.get({
-		url: config.url,
+		url: course.config.url,
 		success: function(data) {
 
 			// Apply metadata to view
@@ -68,7 +76,7 @@ $( document ).ready(function() {
 			$score.find('.panel-body span:nth-child(2)').html(data.snippets.length);
 
 			// Render snippets
-			var completedSnippets = loadSnippets();
+			var completedSnippets = course.loadSnippets();
 			data.snippets.forEach(function(s, i) {
 				var $pointDiv = $('<div/>', {
 					'class': 'row point',	
@@ -81,16 +89,25 @@ $( document ).ready(function() {
 						'html': '<p>' + (fragment.text || '') + '</p><div class="card"><div class="card-body"><pre><code class="' + data.lang + '">' + (fragment.code || '') + '</code></pre></div></div>'
 					}).appendTo($pointDiv.find("div:first"));
 					var snippet_id = i + '_' + j;
-					$('<div/>', {
-						'class': 'col text-right',
-						'html': '<button type="button" onClick="toggleClass(this, \'' + snippet_id + '\')" class="btn btn-lg ' + (completedSnippets.indexOf(snippet_id) != -1 ? 'btn-success' : 'btn-secondary') + '"><i class="fa fa-check" aria-hidden="true"></i></button>'
+
+					var buttonDiv = $('<div/>', {
+						'class': 'col text-right'
 					}).appendTo($pointDiv.find("div:first"));
+
+					$('<button/>', {
+						'type': 'button',
+						'click': function() {
+							course.toggleClass(this, snippet_id);
+						},
+						'class': 'btn btn-lg ' + (completedSnippets.indexOf(snippet_id) != -1 ? 'btn-success' : 'btn-secondary'),
+						'html' : '<i class="fa fa-check" aria-hidden="true"></i></button>'
+					}).appendTo(buttonDiv);
 				});
 				
 			});
 
 			// Use scrollreveal
-			if (!config.show_immediately) {
+			if (!course.config.show_immediately) {
 				window.sr = ScrollReveal({ reset: false, viewFactor : 0.7 });
 				sr.reveal('.point');
 			}
