@@ -1,5 +1,4 @@
-/css
 /node_modules
-/vendor
 *.swp
-
+**/less
+**/scss
