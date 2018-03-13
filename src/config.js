@@ -4,7 +4,7 @@
 
 export function cfg() {
 	return {
-		url: "data/snippets.json",
+		url: "data/snippets-start.json",
 		show_immediately: false
 	};
 }
